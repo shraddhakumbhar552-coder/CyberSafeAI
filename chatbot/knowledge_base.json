@@ -1,0 +1,108 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "responses": [
+        "Hello! Welcome to CyberSafe AI. How can I help you stay safe online?"
+      ]
+    },
+    {
+      "tag": "phishing",
+      "responses": [
+        "Phishing is a scam where attackers use fake emails, messages, or websites to steal personal information.",
+        "Warning signs include suspicious links, urgent requests, unexpected attachments, and fake login pages.",
+        "Never enter passwords or OTPs on unverified websites. Verify the sender and open official websites directly.",
+        "If you entered your password on a suspicious website, change it immediately using the official website and secure your account."
+      ]
+    },
+    {
+      "tag": "otp_scam",
+      "responses": [
+        "An OTP scam occurs when someone tricks you into revealing a one-time password to access an account or authorize an action.",
+        "Never share your OTP with callers, messages, or people claiming to be bank officials.",
+        "If you already shared an OTP, secure the affected account immediately. Contact your bank through its official channel if financial information or transactions are involved.",
+        "If money was lost through financial cyber fraud in India, call 1930 promptly and report the incident at https://cybercrime.gov.in/."
+      ]
+    },
+    {
+      "tag": "job_scam",
+      "responses": [
+        "A job scam involves fake recruiters or employers who try to steal money or personal information.",
+        "Warning signs include requests for recruitment fees, unrealistic salaries, vague job descriptions, and pressure to act immediately.",
+        "Verify the vacancy on the company's official careers website and contact the company using its official contact details.",
+        "If you already paid a suspected scammer, preserve the messages and payment records. Contact your bank or payment provider and report financial cyber fraud in India through 1930 and https://cybercrime.gov.in/."
+      ]
+    },
+    {
+      "tag": "upi_fraud",
+      "responses": [
+        "UPI fraud occurs when someone tricks you into authorizing a payment or revealing sensitive financial information.",
+        "You do not need to enter your UPI PIN to receive money. Review unexpected collect requests carefully before approving them.",
+        "If an unauthorized transaction occurs, contact your bank and UPI service provider immediately.",
+        "For financial cyber fraud in India, call 1930 promptly and report it at https://cybercrime.gov.in/. Keep your transaction ID and evidence."
+      ]
+    },
+    {
+      "tag": "investment_scam",
+      "responses": [
+        "Investment scams use false promises of profits to persuade people to transfer money.",
+        "Warning signs include guaranteed high returns, pressure to invest quickly, and requests to transfer money to personal accounts.",
+        "Verify the company and relevant registration through official regulatory sources before investing.",
+        "If you have already transferred money, preserve evidence, contact your bank or payment provider, and report suspected financial fraud."
+      ]
+    },
+    {
+      "tag": "online_shopping_scam",
+      "responses": [
+        "An online shopping scam involves a fake seller or website that may take payment without delivering the promised product.",
+        "Check seller reviews, contact details, return policies, and website authenticity before paying.",
+        "If an order does not arrive, contact the seller and payment provider through official channels and preserve receipts and messages.",
+        "Report suspected financial cyber fraud in India through 1930 and https://cybercrime.gov.in/."
+      ]
+    },
+    {
+      "tag": "cybercrime_reporting",
+      "responses": [
+        "For cybercrime reporting in India, call the national cybercrime helpline at 1930, especially if you have lost money through financial cyber fraud.",
+        "You can submit an online complaint through the official National Cyber Crime Reporting Portal: https://cybercrime.gov.in/.",
+        "Keep relevant evidence such as transaction IDs, screenshots, phone numbers, messages, and dates. Never share your passwords or OTPs in a complaint to an unverified person."
+      ]
+    },
+    {
+      "tag": "hacked_account",
+      "responses": [
+        "If your account has been hacked, use the platform's official account recovery process immediately.",
+        "Change your password from a trusted device, secure your linked email account, enable two-factor authentication, and sign out of unfamiliar sessions if possible.",
+        "Do not pay someone who promises guaranteed account recovery. Contact the platform through its official support channels.",
+        "If the incident involves financial loss, contact your bank immediately and report it through the appropriate official cybercrime channels."
+      ]
+    },
+    {
+      "tag": "cyberbullying",
+      "responses": [
+        "Online harassment, threats, or blackmail should be taken seriously. Your safety comes first, and you are not to blame for another person's abusive behavior.",
+        "Save screenshots, profile links, messages, dates, and other evidence when it is safe to do so.",
+        "Block or report the account using the platform's official reporting tools. Avoid sending money or additional private information to someone threatening you.",
+        "If you are in immediate danger, contact local police or emergency services. In India, you can also report cybercrime at https://cybercrime.gov.in/."
+      ]
+    },
+    {
+      "tag": "identity_theft",
+      "responses": [
+        "Identity theft occurs when someone misuses your personal information to impersonate you or access services.",
+        "Secure affected accounts, change compromised passwords, enable two-factor authentication, and contact relevant banks or service providers if financial details are involved.",
+        "Preserve evidence and report fake profiles through the relevant platform's official reporting tools.",
+        "If financial cyber fraud has occurred in India, call 1930 promptly and report it at https://cybercrime.gov.in/."
+      ]
+    },
+    {
+      "tag": "malware",
+      "responses": [
+        "Malware is malicious software designed to damage devices, steal information, or gain unauthorized access.",
+        "Warning signs may include unexpected pop-ups, unfamiliar applications, unusual account activity, or unexplained device behavior.",
+        "Avoid opening suspicious files or links. Update your operating system, remove suspicious applications, and use reputable security software.",
+        "If you suspect an account password was stolen, change it from a trusted device and secure the affected accounts."
+      ]
+    }
+  ]
+}

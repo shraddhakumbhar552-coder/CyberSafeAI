@@ -1,0 +1,128 @@
+
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hello",
+        "Hey there",
+        "Good morning",
+        "Namaste"
+      ]
+    },
+    {
+      "tag": "phishing",
+      "patterns": [
+        "What is phishing?",
+        "How do phishing scams work?",
+        "How can I identify a fake link?",
+        "I received a suspicious email",
+        "How do I stay safe from phishing?",
+        "How can I check a suspicious URL?"
+      ]
+    },
+    {
+      "tag": "otp_scam",
+      "patterns": [
+        "Someone asked for my OTP",
+        "What is OTP fraud?",
+        "I shared my OTP with someone",
+        "How can I avoid OTP scams?",
+        "Someone called asking for my bank OTP"
+      ]
+    },
+    {
+      "tag": "job_scam",
+      "patterns": [
+        "Is this job offer fake?",
+        "Someone asked me to pay for a job",
+        "How do I identify a fake job offer?",
+        "Is paying money for a job safe?",
+        "I received a suspicious recruitment message"
+      ]
+    },
+    {
+      "tag": "upi_fraud",
+      "patterns": [
+        "What is UPI fraud?",
+        "Someone sent me a collect request",
+        "I lost money through UPI",
+        "How can I avoid payment scams?",
+        "Someone asked me to scan a QR code to receive money"
+      ]
+    },
+    {
+      "tag": "investment_scam",
+      "patterns": [
+        "Is this investment scheme fake?",
+        "Someone promised guaranteed returns",
+        "How do investment scams work?",
+        "Is a high return investment offer safe?",
+        "How can I identify investment fraud?"
+      ]
+    },
+    {
+      "tag": "online_shopping_scam",
+      "patterns": [
+        "I paid for an online order but received nothing",
+        "How do I identify a fake shopping website?",
+        "Is this online seller trustworthy?",
+        "I think an online store is a scam",
+        "How can I avoid shopping fraud?"
+      ]
+    },
+    {
+      "tag": "cybercrime_reporting",
+      "patterns": [
+        "What is the cybercrime helpline number in India?",
+        "How do I report cybercrime?",
+        "Where can I file a cybercrime complaint?",
+        "Give me the cybercrime contact number",
+        "What is the official cybercrime reporting portal?",
+        "How can I report online fraud?",
+        "I want to complain about cybercrime"
+      ]
+    },
+    {
+      "tag": "hacked_account",
+      "patterns": [
+        "My Instagram account has been hacked",
+        "Someone hacked my email account",
+        "How do I recover my hacked account?",
+        "Someone changed my social media password",
+        "I cannot access my account because it was hacked"
+      ]
+    },
+    {
+      "tag": "cyberbullying",
+      "patterns": [
+        "Someone is bullying me online",
+        "Someone is threatening me on social media",
+        "Someone is blackmailing me online",
+        "Someone is sharing my private photos",
+        "How can I report online harassment?"
+      ]
+    },
+    {
+      "tag": "identity_theft",
+      "patterns": [
+        "Someone is using my personal information",
+        "What is identity theft?",
+        "Someone created a fake profile using my name",
+        "How do I protect my identity online?",
+        "Someone is misusing my personal documents"
+      ]
+    },
+    {
+      "tag": "malware",
+      "patterns": [
+        "What is malware?",
+        "I think my phone has a virus",
+        "How do I know if a file contains malware?",
+        "I downloaded a suspicious application",
+        "How can I protect my computer from malware?"
+      ]
+    }
+  ]
+}

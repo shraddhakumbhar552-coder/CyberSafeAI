@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSafe AI | Cybersecurity Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="{{ url_for('home') }}" class="brand">
+            <span class="brand-icon">🛡️</span>
+            <span>CyberSafe <b>AI</b></span>
+        </a>
+
+        <nav class="navigation">
+            <a class="nav-link active" href="#home">⌂ <span>Home</span></a>
+            <a class="nav-link" href="#chatbot">💬 <span>AI Chatbot</span></a>
+            <a class="nav-link" href="#url-scanner">🔎 <span>URL Scanner</span></a>
+            <a class="nav-link" href="#history">◷ <span>Chat History</span></a>
+            <a class="nav-link" href="#profile">♙ <span>User Profile</span></a>
+            <a class="nav-link" href="{{ url_for('settings_page') }}">⚙ <span>Settings</span></a>
+            <a class="nav-link" href="#awareness">🛡️ <span>Security Awareness</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="mini-shield">🔒</div>
+            <strong>Stay Safe. Stay Aware.</strong>
+            <p>Your digital safety starts here.</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-area">
+
+        <header class="topbar">
+            <button class="menu-button" id="menu-button"
+                    aria-label="Toggle navigation">☰</button>
+
+            <div class="topbar-title">Your Cybersecurity Assistant</div>
+
+            <div class="topbar-right">
+                <span class="status-dot"></span>
+                <span class="online-text">AI Assistant</span>
+                <div class="avatar" title="{{ user.name }}">
+                    {{ user.name[0]|upper }}
+                </div>
+            </div>
+        </header>
+
+        <!-- Home -->
+        <section class="welcome-banner" id="home">
+            <div class="welcome-banner-text">
+                <span class="eyebrow">YOUR PERSONAL SECURITY ASSISTANT</span>
+                <h1>Welcome, <span>{{ user.name }}</span></h1>
+                <p>Ask questions, learn cybersecurity and stay safe online.</p>
+                <a href="#chatbot" class="primary-link">
+                    Start a Conversation →
+                </a>
+            </div>
+            <div class="banner-shield">🛡️</div>
+        </section>
+
+        <!-- Dashboard -->
+        <div class="dashboard-grid">
+
+            <!-- Chatbot -->
+            <section class="chat-panel panel" id="chatbot">
+                <div class="panel-heading chat-heading">
+                    <div class="assistant-identity">
+                        <div class="bot-avatar">🤖</div>
+                        <div>
+                            <h2>CyberSafe AI Chatbot</h2>
+                            <p>Your friendly cybersecurity assistant</p>
+                        </div>
+                    </div>
+
+                    <button type="button" class="secondary-button" id="clear-chat">
+                        Clear Chat
+                    </button>
+                </div>
+
+                <div id="messages" aria-live="polite" class="messages">
+                    <div class="message bot">
+                        Hello! 👋<br>
+                        I'm CyberSafe AI, your cybersecurity assistant.
+                        <br><br>
+                        I can help you understand:
+                        <ul>
+                            <li>Phishing and online scams</li>
+                            <li>OTP fraud and safe browsing</li>
+                            <li>Password and account security</li>
+                            <li>Cybersecurity awareness</li>
+                        </ul>
+                        What would you like to know today?
+                    </div>
+                </div>
+
+                <div class="quick-prompts">
+                    <button type="button" class="prompt-button"
+                            data-prompt="What is phishing?">💡 What is phishing?</button>
+                    <button type="button" class="prompt-button"
+                            data-prompt="How can I stay safe online?">🛡️ Online safety</button>
+                    <button type="button" class="prompt-button"
+                            data-prompt="How can I identify an OTP scam?">📱 OTP scams</button>
+                    <button type="button" class="prompt-button"
+                            data-prompt="How do I create a strong password?">🔐 Strong passwords</button>
+                </div>
+
+                <form id="chat-form" class="chat-form">
+                    <input type="text" id="message"
+                           placeholder="Ask a cybersecurity question..."
+                           maxlength="1000" autocomplete="off" required>
+
+                    <button type="submit" id="send-button">
+                        ➤ <span>Send</span>
+                    </button>
+                </form>
+
+                <p class="disclaimer">
+                    AI-generated guidance may not always be accurate.
+                    Verify important security information.
+                </p>
+            </section>
+
+            <!-- Right-side Dashboard -->
+            <aside class="right-column">
+
+                <!-- Trained phishing URL scanner -->
+                <section class="panel dashboard-card url-scanner-card" id="url-scanner">
+                    <div class="panel-heading">
+                        <h3>🔎 Phishing URL Scanner</h3>
+                    </div>
+                    <div class="url-scanner-content">
+                        <p class="url-scanner-intro">
+                            Check a suspicious link using the trained phishing-detection model.
+                            The scanner analyzes the URL text; it does not visit the website.
+                        </p>
+                        <form id="url-scan-form" class="url-scan-form" novalidate>
+                            <label for="url-scan-input">Website URL</label>
+                            <input
+                                id="url-scan-input"
+                                name="url"
+                                type="text"
+                                inputmode="url"
+                                autocomplete="url"
+                                maxlength="2048"
+                                placeholder="https://example.com"
+                                value=""
+                                required
+                                aria-describedby="url-scan-help"
+                            >
+                            <p class="url-scan-help" id="url-scan-help">
+                                Enter a domain or an http:// or https:// URL. Maximum 2048 characters.
+                            </p>
+                            <button type="submit" class="url-scan-button" id="url-scan-button">
+                                <span class="url-scan-button-label">Scan URL</span>
+                            </button>
+                        </form>
+                        <div id="url-scan-result" class="url-scan-result" role="status" aria-live="polite" hidden>
+                            <strong id="url-scan-result-title"></strong>
+                            <p id="url-scan-result-detail"></p>
+                            <p id="url-scan-result-warning" class="url-scan-warning"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics -->
+                <section class="panel dashboard-card" id="analytics">
+                    <div class="panel-heading">
+                        <h3>📊 Analytics Overview</h3>
+                    </div>
+
+                    <div class="overview-stats">
+                        <div class="overview-stat">
+                            <span class="stat-symbol">💬</span>
+                            <div>
+                                <span class="stat-label">Conversations</span>
+                                <strong id="analytics-conversations">—</strong>
+                            </div>
+                        </div>
+
+                        <div class="overview-stat">
+                            <span class="stat-symbol">🤖</span>
+                            <div>
+                                <span class="stat-label">AI Responses</span>
+                                <strong id="analytics-responses">—</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="card-note" id="analytics-status" role="status">
+                        Loading your statistics...
+                    </p>
+                </section>
+
+                <!-- Chat History -->
+                <section class="panel dashboard-card" id="history">
+                    <div class="panel-header">
+                        <h2>🕘 Chat History</h2>
+                        <p>View and continue your previous conversations.</p>
+                    </div>
+
+                    <div class="history-toolbar">
+                        <button type="button" id="new-chat-history-btn">
+                            + New Conversation
+                        </button>
+                    </div>
+
+                    <div id="chat-history-list" class="chat-history-list">
+                        <p class="history-empty">
+                            Loading your conversations...
+                        </p>
+                    </div>
+
+                    <div id="chat-history-message"
+                         class="history-message"
+                         role="status"
+                         aria-live="polite"></div>
+                </section>
+
+                <!-- User Profile -->
+                <section class="panel dashboard-card" id="profile">
+                    <div class="panel-header">
+                        <h2>👤 User Profile</h2>
+                        <p>Manage your account information</p>
+                    </div>
+
+                    <div class="profile-summary">
+                        <div class="profile-avatar">
+                            {{ user.name[0]|upper }}
+                        </div>
+
+                        <div class="profile-details">
+                            <h3>{{ user.name }}</h3>
+                            <p>{{ user.email }}</p>
+                            <span class="account-status">● Active Account</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info">
+                        <h3>Personal Information</h3>
+
+                        <div class="profile-info-item">
+                            <span>Full Name</span>
+                            <strong>{{ user.name }}</strong>
+                        </div>
+
+                        <div class="profile-info-item">
+                            <span>Email Address</span>
+                            <strong>{{ user.email }}</strong>
+                        </div>
+
+                        <div class="profile-info-item">
+                            <span>Member Since</span>
+                            <strong>
+                                {% if user.created_at %}
+                                    {{ user.created_at.strftime('%d %b %Y') }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Security Awareness -->
+                <section class="panel dashboard-card" id="awareness">
+                    <div class="panel-heading">
+                        <h3>🛡️ Security Awareness</h3>
+                    </div>
+
+                    <div class="awareness-content">
+                        <div class="awareness-item">
+                            <strong>🔗 Check links</strong>
+                            <p>Verify website addresses before entering personal details.</p>
+                        </div>
+
+                        <div class="awareness-item">
+                            <strong>🔐 Protect passwords</strong>
+                            <p>Use strong passwords and enable two-factor authentication.</p>
+                        </div>
+
+                        <div class="awareness-item">
+                            <strong>📱 Never share OTPs</strong>
+                            <p>Never share your OTP, PIN or password with anyone.</p>
+                        </div>
+
+                        <div class="awareness-item">
+                            <strong>🎣 Identify scams</strong>
+                            <p>Be careful with urgent messages and unknown links.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </aside>
+        </div>
+
+        <footer class="page-footer">
+            CyberSafe AI · Stay safe in the digital world.
+        </footer>
+
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

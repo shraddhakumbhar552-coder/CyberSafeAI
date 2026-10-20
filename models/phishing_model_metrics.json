@@ -1,0 +1,54 @@
+{
+  "dataset": "phishing_features.csv",
+  "rows_used": 160063,
+  "label_convention": {
+    "0": "legitimate",
+    "1": "phishing"
+  },
+  "train_rows": 128050,
+  "test_rows": 32013,
+  "class_counts": {
+    "1": 159243,
+    "0": 820
+  },
+  "accuracy": 0.9975010152125698,
+  "roc_auc": 0.9997148319547499,
+  "confusion_matrix_labels_0_then_1": [
+    [
+      163,
+      1
+    ],
+    [
+      79,
+      31770
+    ]
+  ],
+  "classification_report": {
+    "legitimate": {
+      "precision": 0.6735537190082644,
+      "recall": 0.9939024390243902,
+      "f1-score": 0.8029556650246306,
+      "support": 164.0
+    },
+    "phishing": {
+      "precision": 0.99996852475528,
+      "recall": 0.9975195453546423,
+      "f1-score": 0.9987425337944043,
+      "support": 31849.0
+    },
+    "accuracy": 0.9975010152125698,
+    "macro avg": {
+      "precision": 0.8367611218817722,
+      "recall": 0.9957109921895162,
+      "f1-score": 0.9008490994095174,
+      "support": 32013.0
+    },
+    "weighted avg": {
+      "precision": 0.9982963282056749,
+      "recall": 0.9975010152125698,
+      "f1-score": 0.9977395335608041,
+      "support": 32013.0
+    }
+  },
+  "note": "The supplied dataset is highly imbalanced. Metrics are a held-out split of this dataset, not a guarantee of real-world performance."
+}

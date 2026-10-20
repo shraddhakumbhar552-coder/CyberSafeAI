@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | CyberSafe AI</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh; display: grid; place-items: center;
+            background: #081321; color: #eef6ff;
+            font-family: Arial, sans-serif; padding: 20px;
+        }
+        .card {
+            width: 100%; max-width: 400px; padding: 32px;
+            background: #122239; border: 1px solid #263f5b;
+            border-radius: 16px;
+        }
+        h1 { color: #48e6f2; margin-top: 0; }
+        p { color: #b8c8da; }
+        label { display: block; margin: 18px 0 8px; }
+        input {
+            width: 100%; padding: 12px; border-radius: 8px;
+            border: 1px solid #3a506b; background: #091727;
+            color: white; font-size: 15px;
+        }
+        button {
+            width: 100%; padding: 13px; margin-top: 24px;
+            border: 0; border-radius: 8px; background: #06b6d4;
+            color: #071321; font-weight: bold; cursor: pointer;
+        }
+        a { color: #48e6f2; }
+        .message { margin: 12px 0; color: #ffd0d0; }
+        .success { color: #9ff3c8; }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>CyberSafe AI</h1>
+        <p>Create your account</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+            <p class="message {{ category }}">{{ message }}</p>
+          {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <label for="name">Full Name</label>
+            <input id="name" type="text" name="name"
+                   maxlength="100" autocomplete="name" required>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email"
+                   maxlength="150" autocomplete="email" required>
+
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password"
+                   minlength="8" autocomplete="new-password" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p>Already registered?
+            <a href="{{ url_for('login') }}">Login here</a>
+        </p>
+    </main>
+</body>
+</html>

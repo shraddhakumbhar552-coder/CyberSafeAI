@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | CyberSafe AI</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="app-shell settings-page">
+
+    <aside class="sidebar" id="sidebar">
+        <a href="{{ url_for('home') }}" class="brand">
+            <span class="brand-icon">🛡️</span>
+            <span>CyberSafe <b>AI</b></span>
+        </a>
+
+        <nav class="navigation">
+            <a class="nav-link" href="{{ url_for('home') }}">⌂ <span>Home</span></a>
+            <a class="nav-link" href="{{ url_for('home') }}#chatbot">💬 <span>AI Chatbot</span></a>
+            <a class="nav-link" href="{{ url_for('home') }}#analytics">▥ <span>Analytics</span></a>
+            <a class="nav-link" href="{{ url_for('home') }}#history">◷ <span>Chat History</span></a>
+            <a class="nav-link" href="{{ url_for('home') }}#profile">♙ <span>User Profile</span></a>
+            <a class="nav-link active" href="{{ url_for('settings_page') }}">⚙ <span>Settings</span></a>
+            <a class="nav-link" href="{{ url_for('home') }}#awareness">🛡️ <span>Security Awareness</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="mini-shield">🔒</div>
+            <strong>Stay Safe. Stay Aware.</strong>
+            <p>Your digital safety starts here.</p>
+        </div>
+    </aside>
+
+    <main class="main-area settings-main">
+
+        <header class="topbar">
+            <button class="menu-button" id="menu-button"
+                    aria-label="Toggle navigation">☰</button>
+
+            <div class="topbar-title">Settings</div>
+
+            <div class="topbar-right">
+                <span class="status-dot"></span>
+                <span class="online-text">CyberSafe AI</span>
+                <div class="avatar" title="{{ user.name }}">
+                    {{ user.name[0]|upper }}
+                </div>
+            </div>
+        </header>
+
+        <section class="settings-page-header">
+            <div>
+                <span class="eyebrow">PERSONALIZE YOUR EXPERIENCE</span>
+                <h1>⚙ Settings</h1>
+                <p>Manage appearance, chat preferences and account security.</p>
+            </div>
+            <a class="settings-back-link" href="{{ url_for('home') }}">
+                ← Back to Dashboard
+            </a>
+        </section>
+
+        <p class="card-note" id="settings-status" role="status">
+            Your settings and account preferences.
+        </p>
+
+        <div class="settings-page-grid">
+
+            <!-- Appearance -->
+            <section class="panel settings-card">
+                <h3>🎨 Appearance</h3>
+                <p>Customize how CyberSafe AI looks.</p>
+
+                <div class="settings-option">
+                    <div>
+                        <strong>Theme</strong>
+                        <p>Choose Light or Dark Mode.</p>
+                    </div>
+
+                    <select id="theme-setting" class="settings-select">
+                        <option value="dark">Dark Mode</option>
+                        <option value="light">Light Mode</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Chat Settings -->
+            <section class="panel settings-card">
+                <h3>💬 Chat Settings</h3>
+                <p>Control your chat experience.</p>
+
+                <div class="settings-option">
+                    <div>
+                        <strong>Enter to Send</strong>
+                        <p>Press Enter to send a message.</p>
+                    </div>
+
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="enter-to-send" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <strong>Clear Current Chat</strong>
+                        <p>Return to the dashboard and start a fresh chat.</p>
+                    </div>
+
+                    <button type="button" id="settings-clear-chat"
+                            class="settings-btn">
+                        Clear Chat
+                    </button>
+                </div>
+            </section>
+
+            <!-- Security Settings -->
+            <section class="panel settings-card">
+                <h3>🔐 Security Settings</h3>
+                <p>Update your account password securely.</p>
+
+                <form id="settings-password-form">
+                    <div class="settings-field">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password"
+                               autocomplete="current-password" required>
+                    </div>
+
+                    <div class="settings-field">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password"
+                               autocomplete="new-password"
+                               minlength="8" required>
+                    </div>
+
+                    <div class="settings-field">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password"
+                               autocomplete="new-password"
+                               minlength="8" required>
+                    </div>
+
+                    <button type="submit" class="settings-btn">
+                        Change Password
+                    </button>
+
+                    <p id="password-status" class="settings-message"
+                       role="status"></p>
+                </form>
+            </section>
+
+            <!-- Account Settings -->
+            <section class="panel settings-card">
+                <h3>👤 Account Settings</h3>
+                <p>Update your personal information.</p>
+
+                <form id="settings-profile-form">
+                    <div class="settings-field">
+                        <label for="settings-name">Full Name</label>
+                        <input type="text" id="settings-name"
+                               autocomplete="name"
+                               maxlength="100" required>
+                    </div>
+
+                    <div class="settings-field">
+                        <label for="settings-email">Email Address</label>
+                        <input type="email" id="settings-email"
+                               autocomplete="email"
+                               maxlength="150" required>
+                    </div>
+
+                    <button type="submit" class="settings-btn">
+                        Save Profile
+                    </button>
+
+                    <p id="profile-status" class="settings-message"
+                       role="status"></p>
+                </form>
+
+                <div class="settings-logout">
+                    <div>
+                        <strong>Logout</strong>
+                        <p>Sign out of your account.</p>
+                    </div>
+
+                    <form action="{{ url_for('logout') }}" method="POST"
+                          onsubmit="return confirm('Are you sure you want to log out?');">
+                        <button type="submit"
+                                class="settings-btn settings-danger">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="page-footer">
+            CyberSafe AI · Stay safe in the digital world.
+        </footer>
+
+    </main>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
