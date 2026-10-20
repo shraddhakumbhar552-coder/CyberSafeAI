@@ -101,7 +101,7 @@ Return only the final answer in the required plain-text format.
 
     try:
         response = client.models.generate_content(
-            model="gemini-3.5-flash-lite",
+            model="gemini-3.8-flash",
             contents=prompt
         )
 
