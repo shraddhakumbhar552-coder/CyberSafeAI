@@ -1,4 +1,5 @@
 import os
+from wsgiref import types
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,7 +10,14 @@ except ImportError:
     genai = None
 
 api_key = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key) if api_key and genai is not None else None
+client = (
+    genai.Client(
+        api_key=api_key,
+        http_options=types.HttpOptions(timeout=20000)
+    )
+    if api_key and genai is not None and types is not None
+    else None
+)
 
 
 def generate_cyber_answer(question, context):
