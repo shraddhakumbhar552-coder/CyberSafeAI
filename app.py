@@ -45,11 +45,12 @@ app.config["SESSION_COOKIE_SECURE"] = (
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
 
 app.config["MYSQL_HOST"] = os.environ.get("MYSQL_HOST", "localhost")
+app.config["MYSQL_PORT"] = int(os.environ.get("MYSQL_PORT", "3306"))
 app.config["MYSQL_USER"] = os.environ.get("MYSQL_USER", "root")
 app.config["MYSQL_PASSWORD"] = os.environ.get("MYSQL_PASSWORD", "")
-app.config["MYSQL_DB"] = "cybersafe_ai"
+app.config["MYSQL_DB"] = os.environ.get("MYSQL_DB", "defaultdb")
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
-
+app.config["MYSQL_CUSTOM_OPTIONS"] = {"ssl": {}}
 mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 
