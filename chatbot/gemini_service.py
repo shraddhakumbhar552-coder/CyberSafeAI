@@ -1,22 +1,18 @@
 import os
-from wsgiref import types
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 
 load_dotenv()
 
-try:
-    from google import genai
-except ImportError:
-    genai = None
-
 api_key = os.getenv("GEMINI_API_KEY")
+
 client = (
     genai.Client(
         api_key=api_key,
         http_options=types.HttpOptions(timeout=20000)
     )
-    if api_key and genai is not None and types is not None
-    else None
+    if api_key else None
 )
 
 
