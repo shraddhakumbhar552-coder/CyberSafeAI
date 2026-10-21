@@ -1,4 +1,6 @@
+
 import os
+import time
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -10,7 +12,7 @@ api_key = os.getenv("GEMINI_API_KEY")
 client = (
     genai.Client(
         api_key=api_key,
-        http_options=types.HttpOptions(timeout=20000)
+        http_options=types.HttpOptions(timeout=60000)
     )
     if api_key else None
 )
@@ -20,100 +22,79 @@ def generate_cyber_answer(question, context):
     if client is None:
         return (
             "Configuration Error\n\n"
-            "Gemini API key is not configured. Please check your .env file."
+            "Gemini API key is not configured."
         )
 
     prompt = f"""
 You are CyberSafe AI, a professional cybersecurity awareness assistant.
 
-Your job is to provide accurate, helpful, well-structured answers
-about cybersecurity, online scams, fraud prevention and digital safety.
+Provide accurate, helpful, well-structured answers about cybersecurity,
+online scams, fraud prevention, and digital safety.
 
-IMPORTANT FORMATTING RULES:
+Use simple professional English, clear headings, short paragraphs,
+numbered steps, and bullet points where appropriate.
+Do not use raw Markdown symbols such as ###, **, or ---.
+Use conversation history to answer follow-up questions.
+For follow-ups, give only the relevant next actions.
+Do not claim a website is safe based only on its URL.
 
-1. Use simple, professional English.
-2. Start with a short, direct answer to the user's question.
-3. Use clear section headings.
-4. Put each heading on a separate line.
-5. Use numbered lists for steps and bullet points for warning signs.
-6. Keep paragraphs short and readable.
-7. Avoid repeating the same information.
-8. Do not write one huge paragraph.
-9. Do not include unnecessary greetings in every answer.
-10. Do not output raw Markdown symbols such as ###, **, or ---.
-11. Use plain text formatting only.
-12. Always use the conversation history to understand follow-up questions.
-13. If the user asks "What should I do now?", "What next?", or a similar follow-up,
-    identify the specific problem from the previous messages.
-14. Give only the next relevant actions. Do not repeat the complete previous answer
-    or all its headings.
-15. For online blackmail follow-ups, prioritize: do not pay, preserve evidence,
-    secure accounts, report the account, and seek help if threatened.
-16. Keep follow-up answers concise, practical, and specific to the user's situation.
+For scam-related questions, cover warning signs, prevention,
+actions to take if affected, and reporting options when relevant.
+For general cybersecurity questions, use relevant headings.
 
-FOR SCAM-RELATED QUESTIONS, USE THIS STRUCTURE
-WHEN THE SECTIONS ARE RELEVANT:
-
-Overview
-Explain the scam briefly.
-
-How It Works
-Explain the common scam method.
-
-Warning Signs
-List the important red flags.
-
-How to Stay Safe
-Give practical prevention steps.
-
-What to Do If It Already Happened
-Give immediate actions relevant to the user's situation.
-
-How to Report
-Mention appropriate official reporting options when relevant.
-
-For short follow-up questions, answer only the relevant part
-instead of repeating the entire previous explanation.
-
-For general cybersecurity questions, choose headings that
-fit the question rather than forcing every section.
-
-Use the following cybersecurity information as supporting context.
-Do not treat it as a reason to ignore the user's actual question.
-
-If the current question is a short follow-up such as "How it happens?",
-answer about the topic discussed in the immediately previous messages.
-
-Explain how that specific scam works step by step.
-Never ask the user to repeat a topic that is already clear from the conversation.
-
+Context:
 {context}
 
 Conversation and current question:
 {question}
 
-Return only the final answer in the required plain-text format.
+Return only the final answer in plain text.
 """
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+    models = [
+        "gemini-2.5-flash",
+        "gemini-3.5-flash-lite",
+    ]
 
-        if response.text:
-            return response.text.strip()
+    for model in models:
+        for attempt in range(2):
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                )
 
-        return (
-            "Unable to Generate an Answer\n\n"
-            "Please try asking your question again."
-        )
+                if response.text and response.text.strip():
+                    return response.text.strip()
 
-    except Exception as error:
-        print("Gemini API error:", error)
+                break
 
-        return (
-            "Temporary Service Issue\n\n"
-            "Sorry, I couldn't generate an answer right now. "
-            "Please try again."
-        )
+            except Exception as error:
+                print(
+                    f"Gemini error | model={model} "
+                    f"| attempt={attempt + 1}: {error}"
+                )
+
+                message = str(error).lower()
+                temporary = any(
+                    word in message
+                    for word in [
+                        "503", "504", "429", "500", "502",
+                        "unavailable", "deadline_exceeded",
+                        "resource_exhausted", "timeout",
+                        "timed out",
+                    ]
+                )
+
+                if not temporary:
+                    break
+
+                if attempt == 0:
+                    time.sleep(2)
+
+    return (
+        "CyberSafe AI — Temporary Service Issue\n\n"
+        "The AI service is temporarily unavailable. Please try again "
+        "shortly. Meanwhile, avoid suspicious links and never share "
+        "your passwords, OTPs, or banking PINs."
+    )
