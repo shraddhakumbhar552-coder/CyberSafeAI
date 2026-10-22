@@ -1,3 +1,4 @@
+
 import json
 import random
 import re
@@ -56,101 +57,55 @@ vectorizer = TfidfVectorizer(
 question_vectors = vectorizer.fit_transform(questions)
 
 
-# ---------------------------------------------------------------------------
-# Small-talk detection (greetings, thanks, acknowledgements, goodbyes)
-# ---------------------------------------------------------------------------
-# NOTE: every phrase below is written in NORMALIZED form (lowercase, no
-# punctuation) because messages are normalized before they are compared.
+# ---------------------------------------------------------
+# Small talk and follow-up phrases
+# ---------------------------------------------------------
 
 GREETINGS = {
     "hi",
     "hello",
     "hey",
-    "hii",
-    "hiii",
-    "heyy",
     "namaste",
     "good morning",
     "good afternoon",
     "good evening",
-    "hi there",
-    "hello there",
-    "hey there",
-    "hi cybersafe",
-    "hello cybersafe",
+}
+
+THANKS_MESSAGES = {
+    "thanks",
+    "thank you",
+    "thanks a lot",
+    "thank you so much",
+    "thx",
+    "thanks thats helpful",
+    "thank you thats helpful",
+    "that is helpful",
+    "thats helpful",
+    "that was helpful",
+    "thanks for your help",
+    "thank you for your help",
+    "much appreciated",
 }
 
 ACKNOWLEDGMENTS = {
     "okay",
     "ok",
-    "okk",
-    "k",
-    "alright",
     "got it",
-    "i got it",
     "understood",
-    "i understand",
     "makes sense",
-    "that makes sense",
-    "i see",
-    "cool",
-    "great",
-    "nice",
-    "perfect",
+}
+
+AFFIRMATIVE_REPLIES = {
+    "yes",
+    "yeah",
+    "yep",
     "sure",
-    "fine",
-    "noted",
+    "yes please",
+    "yes tell me",
+    "tell me more",
+    "go ahead",
+    "please do",
 }
-
-GOODBYES = {
-    "bye",
-    "goodbye",
-    "bye bye",
-    "see you",
-    "see you later",
-    "take care",
-    "good night",
-    "talk to you later",
-    "ttyl",
-}
-
-# Matches thanks / appreciation anywhere in a short message.
-THANKS_PATTERN = re.compile(
-    r"\b("
-    r"thanks|thank you|thankyou|thank u|thx|tysm|ty|many thanks|"
-    r"appreciate it|appreciate that|appreciate the help|"
-    r"(that|this) (is|was|has been) (really |very |so )?"
-    r"(helpful|useful|great|good|clear|informative)|"
-    r"thats (really |very |so )?(helpful|useful|great|good|clear|informative)|"
-    r"great help|good help|nice answer|good answer|great answer"
-    r")\b"
-)
-
-# If any of these words appear, the user is asking something, not just thanking.
-QUESTION_WORDS = {
-    "what", "how", "why", "when", "where", "which", "who", "whom",
-    "should", "could", "would", "can", "will", "does", "do", "did",
-    "explain", "tell", "show", "give", "help me", "also", "another", "but",
-}
-
-THANKS_REPLIES = [
-    "You're welcome! Stay safe online. Feel free to ask if you need more cybersecurity help.",
-    "Happy to help! If you have another cybersecurity question, just ask.",
-    "Glad that helped! Remember to stay alert for suspicious links and never share your OTP.",
-    "Anytime! Stay cautious online, and ask me whenever you need more guidance.",
-]
-
-ACK_REPLIES = [
-    "Glad that helped. Let me know if you have another cybersecurity question.",
-    "Great! I'm here if you want to know more about staying safe online.",
-    "Sounds good. Feel free to ask if anything else comes up.",
-]
-
-GOODBYE_REPLIES = [
-    "Goodbye! Stay safe online.",
-    "Take care! Remember: never share your OTP or passwords with anyone.",
-    "See you later! Stay alert and stay secure.",
-]
 
 FOLLOW_UP_PHRASES = (
     "what should i do",
@@ -191,73 +146,19 @@ FOLLOW_UP_PHRASES = (
 )
 
 
+# ---------------------------------------------------------
+# Text helpers
+# ---------------------------------------------------------
+
 def normalize_text(text):
-    """Lowercase, remove punctuation (including apostrophes) and extra spaces."""
+    """Lowercase text, remove punctuation, and normalize spaces."""
     text = text.lower().strip()
     text = re.sub(r"[^\w\s]", "", text)
     return re.sub(r"\s+", " ", text)
 
 
-def is_greeting(cleaned):
-    return cleaned in GREETINGS
-
-
-def is_thanks(cleaned, raw_message):
-    """
-    True only when the message is *just* thanks / appreciation.
-    "Thanks, that's helpful!"            -> True
-    "thank you so much"                  -> True
-    "thanks! what about passwords?"      -> False (contains a new question)
-    """
-    if "?" in raw_message:
-        return False
-
-    words = cleaned.split()
-    if not words or len(words) > 10:
-        return False
-
-    if not THANKS_PATTERN.search(cleaned):
-        return False
-
-    return not (set(words) & QUESTION_WORDS)
-
-
-def is_acknowledgment(cleaned):
-    return cleaned in ACKNOWLEDGMENTS
-
-
-def is_goodbye(cleaned):
-    return cleaned in GOODBYES
-
-
-def get_small_talk_reply(user_message, cleaned):
-    """Return a reply for greetings / thanks / acknowledgements / goodbyes, else None."""
-    if is_greeting(cleaned):
-        return random.choice(
-            response_map.get(
-                "greeting",
-                ["Hello! How can I help you stay safe online?"],
-            )
-        )
-
-    if is_thanks(cleaned, user_message):
-        return random.choice(THANKS_REPLIES)
-
-    if is_acknowledgment(cleaned):
-        return random.choice(ACK_REPLIES)
-
-    if is_goodbye(cleaned):
-        return random.choice(GOODBYE_REPLIES)
-
-    return None
-
-
-# ---------------------------------------------------------------------------
-# Conversation helpers
-# ---------------------------------------------------------------------------
-
 def extract_history_text(conversation_history):
-    """Convert supported conversation-history formats to readable messages."""
+    """Convert recent conversation history into readable messages."""
     if not isinstance(conversation_history, list):
         return []
 
@@ -282,72 +183,81 @@ def extract_history_text(conversation_history):
             and isinstance(content, str)
             and content.strip()
         ):
-            speaker = "Assistant" if role in ("assistant", "bot") else "User"
-            recent_messages.append(f"{speaker}: {content.strip()[:1500]}")
+            speaker = (
+                "Assistant"
+                if role in ("assistant", "bot")
+                else "User"
+            )
+
+            recent_messages.append(
+                f"{speaker}: {content.strip()[:1500]}"
+            )
 
     return recent_messages
 
 
 def get_previous_user_questions(history):
-    """
-    Return earlier user messages that are real questions.
-    Small talk (thanks, ok, hi, bye) is skipped so a later follow-up such as
-    "what should I do now?" still refers to the last *real* topic.
-    """
-    questions_only = []
-
-    for item in history:
-        if not (isinstance(item, str) and item.startswith("User: ")):
-            continue
-
-        text = item[len("User: "):].strip()
-        cleaned = normalize_text(text)
-
-        if (
-            is_greeting(cleaned)
-            or is_thanks(cleaned, text)
-            or is_acknowledgment(cleaned)
-            or is_goodbye(cleaned)
-        ):
-            continue
-
-        questions_only.append(text)
-
-    return questions_only
+    """Get previous user messages from conversation history."""
+    return [
+        item[len("User: "):].strip()
+        for item in history
+        if isinstance(item, str) and item.startswith("User: ")
+    ]
 
 
 def match_intent(text):
-    """Return the closest intent and its cosine-similarity score."""
+    """Return the closest intent and its similarity score."""
     vector = vectorizer.transform([text])
-    scores = cosine_similarity(vector, question_vectors).flatten()
+    scores = cosine_similarity(
+        vector,
+        question_vectors,
+    ).flatten()
+
     best_index = int(scores.argmax())
+
     return tags[best_index], float(scores[best_index])
 
 
+# ---------------------------------------------------------
+# URL detection and phishing report
+# ---------------------------------------------------------
+
 def find_url_in_message(text):
     """Find an explicit URL or domain supplied by the user."""
-    pattern = r"""(?:https?://|www\.)[^\s<>'"]+|(?<![@\w])(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:/[^\s<>'"]*)?"""
-    matches = re.findall(pattern, text, flags=re.IGNORECASE)
+    pattern = (
+        r"""(?:https?://|www\.)[^\s<>'"]+"""
+        r"""|(?<![@\w])(?:[a-zA-Z0-9-]+\.)+"""
+        r"""[a-zA-Z]{2,}(?:/[^\s<>'"]*)?"""
+    )
+
+    matches = re.findall(
+        pattern,
+        text,
+        flags=re.IGNORECASE,
+    )
 
     if not matches:
         return None
 
     candidate = matches[0].rstrip(".,;:!?)]}")
+
     if "." not in candidate or "@" in candidate:
         return None
 
-    # Add a scheme for bare domains so the URL model receives a full URL.
     if candidate.lower().startswith("www."):
         candidate = "https://" + candidate
-    elif not candidate.lower().startswith(("http://", "https://")):
+    elif not candidate.lower().startswith(
+        ("http://", "https://")
+    ):
         candidate = "https://" + candidate
 
     return candidate
 
 
 def build_url_report(candidate_url, result):
-    """Format the phishing-model result as Markdown."""
+    """Format phishing detector results as Markdown."""
     probability = result.get("phishing_probability")
+
     try:
         probability_percent = float(probability) * 100
     except (TypeError, ValueError):
@@ -362,101 +272,157 @@ def build_url_report(candidate_url, result):
     return (
         "## URL Safety Check\n\n"
         f"- **URL:** {result.get('url', candidate_url)}\n"
-        f"- **Assessment:** {result.get('assessment', 'Assessment unavailable')}\n"
-        f"- **Model-estimated phishing probability:** {probability_text}\n\n"
-        f"**Important:** {result.get('warning', 'This automated result is not a guarantee of safety.')}\n\n"
+        f"- **Assessment:** "
+        f"{result.get('assessment', 'Assessment unavailable')}\n"
+        f"- **Model-estimated phishing probability:** "
+        f"{probability_text}\n\n"
+        f"**Important:** "
+        f"{result.get('warning', 'This automated result is not a guarantee of safety.')}\n\n"
         "**Safety steps**\n"
-        "- Do not enter passwords, OTPs, or payment details on an unverified site.\n"
-        "- Check the domain spelling and access services through their official app or a known address.\n"
-        "- If the link seems suspicious, do not open it. Report it to the relevant service."
+        "- Do not enter passwords, OTPs, or payment details "
+        "on an unverified site.\n"
+        "- Check the domain spelling and access services "
+        "through their official app or a known address.\n"
+        "- If the link seems suspicious, do not open it. "
+        "Report it to the relevant service."
     )
 
 
-COMMON_RULES = """
-Instructions:
-- Answer the current question directly. Do not start with "Hello" or "Hi", and do not repeat the welcome message.
-- Use clear Markdown: a short heading when useful, short paragraphs, and numbered steps for actions.
-- Put urgent actions first when the user may be at risk.
-- Do not claim that a URL, attachment, account, or website is safe based only on limited information.
-- Explain that automated phishing scores are estimates, not guarantees.
-- Do not invent facts, contact details, or reporting procedures. If unsure, say so.
-- Keep the response focused and practical, usually around 100-250 words unless more detail is needed.
-- Keep advice proportionate to the user's described situation.
-- If the user only clicked a suspicious link, explain that clicking alone does not prove the device is infected.
-- If they entered a password, tell them to change it from a trusted device and enable multi-factor authentication.
-- If they entered banking details or an OTP, tell them to contact their bank immediately through an official channel.
-- Recommend disconnecting from the internet only when malware infection or ongoing suspicious activity is suspected.
-- If a suspicious file was downloaded but not opened, advise not to open it, to delete or quarantine it, and to run an updated security scan. Do not assume the device is infected.
-- Format numbered lists using sequential Markdown numbering: 1., 2., 3., 4.
-- Never restart numbering at 1 for every list item.
-- Do not mix numbered-list styles such as "1." and "1)".
-- Use bullet points when the order of actions does not matter.
-- Keep follow-up answers concise and avoid repeating previous advice.
-"""
-
-FOLLOW_UP_RULES = """
-- Use the history only to understand context and resolve references such as "it", "this", or "that".
-- For a specific new question, answer the new topic rather than continuing an unrelated old topic.
-- For follow-up questions, answer only the new part; do not repeat the full previous answer.
-"""
-
-
-def build_prompt(user_message, history):
-    if history:
-        conversation_text = "\n".join(history[-6:])
-        return (
-            f"Recent conversation:\n{conversation_text}\n\n"
-            f"Current user question:\n{user_message}\n"
-            f"{COMMON_RULES}{FOLLOW_UP_RULES}"
-        )
-
-    return (
-        f"Current user question:\n{user_message}\n"
-        f"{COMMON_RULES}"
-    )
-
-
-# ---------------------------------------------------------------------------
-# Main entry point
-# ---------------------------------------------------------------------------
+# ---------------------------------------------------------
+# Main chatbot response function
+# ---------------------------------------------------------
 
 def get_answer(user_message, conversation_history=None):
-    """Generate a concise, well-formatted cybersecurity answer."""
-    if not isinstance(user_message, str) or not user_message.strip():
+    """Generate a cybersecurity answer with conversation context."""
+
+    if (
+        not isinstance(user_message, str)
+        or not user_message.strip()
+    ):
         return "Please enter a question."
 
     cleaned = normalize_text(user_message)
     history = extract_history_text(conversation_history)
 
-    # 1) Small talk first: greetings, thanks, acknowledgements, goodbyes.
-    small_talk = get_small_talk_reply(user_message, cleaned)
-    if small_talk:
-        return small_talk
+    # IMPORTANT:
+    # Handle "yes" before generic acknowledgement replies.
+    # Use the previous assistant message to understand the reply.
+    if cleaned in AFFIRMATIVE_REPLIES and history:
 
-    # 2) Explicit URL/domain -> dedicated phishing model.
-    #    A model score is a risk signal, not proof that a site is safe or malicious.
+        last_assistant_message = next(
+            (
+                item[len("Assistant: "):].strip()
+                for item in reversed(history)
+                if item.startswith("Assistant: ")
+            ),
+            "",
+        )
+
+        if last_assistant_message:
+            conversation_text = "\n".join(history[-6:])
+
+            follow_up_question = (
+                f"Recent conversation:\n"
+                f"{conversation_text}\n\n"
+                f"The user's current reply is: {user_message}\n\n"
+                "Understand this short affirmative reply using "
+                "the previous assistant message.\n"
+                "If the assistant offered to explain a topic or "
+                "provide next steps, do that now.\n"
+                "Stay on the same topic and answer directly.\n"
+                "Do not give a generic list of cybersecurity topics.\n"
+                "Do not ask the user to choose the topic again "
+                "when the previous offer makes the topic clear."
+            )
+
+            return generate_cyber_answer(
+                question=follow_up_question,
+                context=(
+                    "Category: cybersecurity awareness\n"
+                    "Use the recent conversation to understand "
+                    "and answer the implied follow-up."
+                ),
+            )
+
+    # Handle greetings.
+    if cleaned in GREETINGS:
+        return random.choice(
+            response_map.get(
+                "greeting",
+                ["Hello! How can I help you stay safe online?"],
+            )
+        )
+
+    # Handle thank-you messages.
+    if (
+        cleaned in THANKS_MESSAGES
+        or (
+            cleaned.startswith(("thanks ", "thank you "))
+            and any(
+                phrase in cleaned
+                for phrase in (
+                    "helpful",
+                    "that helped",
+                    "for your help",
+                )
+            )
+        )
+    ):
+        return (
+            "You're welcome! Stay safe online. "
+            "Feel free to ask if you need more cybersecurity help."
+        )
+
+    # Handle acknowledgements other than affirmative follow-ups.
+    if cleaned in ACKNOWLEDGMENTS:
+        return (
+            "Glad that helped! Let me know if you have "
+            "another cybersecurity question."
+        )
+
+    # Detect URLs and use the dedicated phishing detector.
     candidate_url = find_url_in_message(user_message)
+
     if candidate_url:
         result = check_url(candidate_url)
+
         if result.get("ok"):
             return build_url_report(candidate_url, result)
 
-    # 3) Intent matching with follow-up resolution.
+    # Analyze the message and identify its likely intent.
     message_analysis = analyze_message(user_message)
+
     previous_questions = get_previous_user_questions(history)
     best_tag, confidence = match_intent(user_message)
 
-    is_follow_up = any(phrase in cleaned for phrase in FOLLOW_UP_PHRASES)
-    words = cleaned.split()
-    vague_references = {"it", "this", "that", "they", "them", "there"}
-
-    short_follow_up = (
-        len(words) <= 5 and bool(set(words) & vague_references)
+    is_follow_up = any(
+        phrase in cleaned
+        for phrase in FOLLOW_UP_PHRASES
     )
 
-    if previous_questions and (is_follow_up or short_follow_up):
-        previous_question = previous_questions[-1]
-        previous_tag, previous_confidence = match_intent(previous_question)
+    words = cleaned.split()
+
+    vague_references = {
+        "it",
+        "this",
+        "that",
+        "they",
+        "them",
+        "there",
+    }
+
+    short_follow_up = (
+        len(words) <= 5
+        and bool(set(words) & vague_references)
+    )
+
+    # Resolve contextual follow-ups to the previous user topic.
+    if previous_questions and (
+        is_follow_up or short_follow_up
+    ):
+        previous_tag, previous_confidence = match_intent(
+            previous_questions[-1]
+        )
 
         if previous_confidence >= 0.20:
             best_tag = previous_tag
@@ -471,35 +437,102 @@ def get_answer(user_message, conversation_history=None):
 
     if confidence < 0.20:
         return (
-            "I'm not sure which topic you mean. Please tell me a little more "
-            "about the situation, or ask about phishing, OTP fraud, job scams, "
-            "UPI fraud, investment scams, or shopping scams."
+            "I'm not sure which topic you mean. Please tell me "
+            "a little more about the situation, or ask about "
+            "phishing, OTP fraud, job scams, UPI fraud, "
+            "investment scams, or shopping scams."
         )
 
     knowledge = knowledge_map.get(best_tag)
-    if not knowledge:
-        return "I don't have verified information for this topic yet."
 
-    context = "\n".join(knowledge.get("responses", []))
-    context += (
-        "\n\nUser-message analysis (supporting signals only): "
-        + json.dumps(message_analysis, ensure_ascii=False)
-        + "\nTreat sentiment as a rough estimate and entities as extracted text, "
-        "not verified facts. Do not infer identity or intent from them."
+    if not knowledge:
+        return (
+            "I don't have verified information for this topic yet."
+        )
+
+    context = "\n".join(
+        knowledge.get("responses", [])
     )
 
+    context += (
+        "\n\nUser-message analysis (supporting signals only): "
+        + json.dumps(
+            message_analysis,
+            ensure_ascii=False,
+        )
+        + "\nTreat sentiment as a rough estimate and entities "
+        "as extracted text, not verified facts. "
+        "Do not infer identity or intent from them."
+    )
+
+    instructions = """
+Instructions:
+- Answer the current question directly.
+- Do not repeat the welcome message.
+- Use conversation history to understand context and references.
+- For a specific new question, answer the new topic.
+- For follow-ups, answer the new question without repeating
+  the entire previous answer.
+- Use clear Markdown, short paragraphs, and numbered steps
+  when useful.
+- Put urgent actions first when the user may be at risk.
+- Do not claim a URL, attachment, account, or website is safe
+  based only on limited information.
+- Explain that automated phishing scores are estimates,
+  not guarantees.
+- Do not invent facts, contact details, or reporting procedures.
+- Keep responses focused and practical, usually around
+  100-250 words.
+- Clicking a suspicious link alone does not prove a device
+  is infected.
+- If a user entered a password, advise changing it from a
+  trusted device and enabling multi-factor authentication.
+- If banking details or an OTP were shared, advise contacting
+  the bank immediately through an official channel.
+- If money was stolen in India, advise contacting the bank
+  and reporting promptly through 1930 or cybercrime.gov.in.
+- Downloading a file alone does not prove infection.
+  If it has not been opened, advise not opening it, deleting
+  or quarantining it, and running an updated security scan.
+"""
+
+    if history:
+        conversation_text = "\n".join(history[-6:])
+
+        question_for_gemini = (
+            f"Recent conversation:\n"
+            f"{conversation_text}\n\n"
+            f"Current user question:\n"
+            f"{user_message}\n\n"
+            f"{instructions}"
+        )
+    else:
+        question_for_gemini = (
+            f"Current user question:\n"
+            f"{user_message}\n\n"
+            f"{instructions}"
+        )
+
     answer = generate_cyber_answer(
-        question=build_prompt(user_message, history),
+        question=question_for_gemini,
         context=f"Category: {best_tag}\n{context}",
     )
 
     if not isinstance(answer, str) or not answer.strip():
-        return random.choice(knowledge["responses"])
+        return random.choice(
+            knowledge["responses"]
+        )
 
-    if answer.startswith("Gemini API key is not configured"):
+    if answer.startswith(
+        "Gemini API key is not configured"
+    ):
         return answer
 
-    if answer.startswith("Sorry, I couldn't generate an answer"):
-        return random.choice(knowledge["responses"])
+    if answer.startswith(
+        "Sorry, I couldn't generate an answer"
+    ):
+        return random.choice(
+            knowledge["responses"]
+        )
 
     return answer.strip()
